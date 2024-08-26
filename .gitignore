@@ -1,0 +1,5 @@
+
+*.keras
+*.json
+*.v2
+*.pyc
