@@ -56,7 +56,7 @@ class MyTuner(keras_tuner.BayesianOptimization):
         # get data model
         print(hp)
         hindcast_length = hp["hindcast_length"]
-        data_model.main(os.path.join(cross_indices_path, f"cross_indices_{hindcast_length}.pckl"), verbose)
+        data_model.main(os.path.join(cross_indices_path, f"cross_indices_{hindcast_length}.pkl"), verbose)
         
         metric_fcns = {"nse": calculate_nse,
                       "kge":  calculate_kge,

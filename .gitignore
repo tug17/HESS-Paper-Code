@@ -1,5 +1,6 @@
 
 *.keras
-*.json
 *.v2
 *.pyc
+*.npy
+*.pkl
