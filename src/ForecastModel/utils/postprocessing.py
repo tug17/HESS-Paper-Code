@@ -93,6 +93,56 @@ def get_bold_mask(df, fcn=np.argmax, n_multi_cols=3, offset=0):
             mask[j, idx[j]*n_multi_cols+n+offset] = 1
     return mask
 
+
+def find_best_models(data_lstm, data_arima):
+    all_best = []
+    normalized_arima = []
+    normalized_lstm = []
+    normalized_hydro = []
+    
+    all_absolute_errors_arima = []
+    all_absolute_errors_lstm = []
+    
+
+    for i in range(0,96):
+        arima_q0 = data_arima['fc%s' % i].values
+        lstm_q0 = data_lstm['q%s' % i].values
+        measured_q0 = data_arima['obs%s' % i].values
+        
+        num_best_arima = 0
+        num_best_lstm = 0
+        num_best_hydro = 0
+        
+        all_abs_error = []
+        all_abs_error2 = []
+
+        for j in range(0,len(arima_q0)):
+            error_arima = abs(measured_q0[j] - arima_q0[j])
+            error_lstm = abs(measured_q0[j] - lstm_q0[j])
+            
+            if error_arima < error_lstm:
+                num_best_arima += 1
+            if error_lstm < error_arima:
+                num_best_lstm += 1
+                
+            
+            all_abs_error.append(error_arima)
+            all_abs_error2.append(error_lstm)
+
+        all_absolute_errors_arima.append(all_abs_error)
+        all_absolute_errors_lstm.append(all_abs_error2)
+
+        list_best = [num_best_arima, num_best_lstm]
+    
+        all_best.append(list_best)
+    
+        normalized_arima.append(num_best_arima / (num_best_arima + num_best_lstm))
+        normalized_lstm.append(num_best_lstm / (num_best_arima + num_best_lstm))
+        normalized_hydro.append(num_best_hydro / (num_best_arima + num_best_lstm))
+    
+    return all_best, np.asarray(normalized_arima), np.asarray(normalized_lstm), all_absolute_errors_arima, all_absolute_errors_lstm
+
+
 #############################
 #         Classes
 #############################

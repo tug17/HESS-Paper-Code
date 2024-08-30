@@ -23,7 +23,7 @@ import os
 #         Classes
 #############################
 class CreateIndices:
-    def __init__(self, data_path = r"F:\11_EFFORS\data\Edelsdorf.csv", out_path = "cross_indices"):
+    def __init__(self, data_path = r"data\Dataset.csv", out_path = "cross_indices"):
         self.data_path = data_path
         if os.path.isdir(out_path) == False:
             os.mkdir(out_path)
@@ -67,7 +67,12 @@ class CreateIndices:
         return X, y
 
     #%%
-    def create(self, n_sets = 7, hincast_lengths = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120], forecast_len = 96, target_len = 96, oscilation_len=0, dtime_secs=15*60):
+    def create(self, n_sets = 7, 
+               hincast_lengths = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120], 
+               forecast_len = 96, 
+               target_len = 96, 
+               oscilation_len=0, 
+               dtime_secs=15*60):
         for hincast_len in hincast_lengths:
             print("prepareing index arrays")
             
@@ -76,7 +81,7 @@ class CreateIndices:
             target_delta    = target_len  * timedelta(seconds=dtime_secs)
             
             start_date = self.df.index[0]  + hindcast_delta
-            end_date   = self.df.index[-1] # - np.max((forecast_delta, target_delta))
+            end_date   = self.df.index[-1]
             
             
             i_splits = [(start_date + x * (end_date-start_date) / n_sets).round('1d') for x in range(0,n_sets+1)]
@@ -88,9 +93,6 @@ class CreateIndices:
                 print(f"processing set {n_set+1}")
                 set_mask = (df_part.index > i_splits[i-1]) & (df_part.index < i_splits[i] - forecast_delta)
                 df_part_set = df_part.loc[set_mask]
-                
-                #set_mask = (self.df.index > i_splits[i-1]) & (self.df.index <= i_splits[i] - forecast_delta)
-                #df_set = self.df.loc[set_mask]
                 
                 n_samples = df_part_set.shape[0]
                 
@@ -126,14 +128,11 @@ class CreateIndices:
                 if np.min(i_hincast) < 0:
                     print("index error: index below 0")
             
-                # sets[n_set] = (i_hincast.tolist(), i_forecast.tolist(), i_target.tolist())
                 sets[n_set] = (i_hincast, i_forecast, i_target)
             
             print("set sizes (hincast, forecast, target):")
             for key in sets.keys():
-                #print(f"    set {key}: ({np.array(sets[key][0]).shape}, {np.array(sets[key][1]).shape}, {np.array(sets[key][2]).shape})")
                 print(f"    set {key}: ({sets[key][0].shape}, {sets[key][1].shape}, {sets[key][2].shape})")
-                # hincast_i  = np.arange(idx_splits[n-1], idx_splits[n], dtype=int)
             
             
             dic = {"sets"  : sets,
@@ -142,9 +141,7 @@ class CreateIndices:
                               "forecast_len" : forecast_len + oscilation_len,
                               "target_len"   : target_len + oscilation_len,
                 }}
-            with open(os.path.join(self.out_path, f'cross_indices_{hincast_len}.pckl'), 'wb') as fp:
+            with open(os.path.join(self.out_path, f'cross_indices_{hincast_len}.pkl'), 'wb') as fp:
                 pickle.dump(dic, fp)
-            #with open(os.path.join(self.out_path, f'cross_indices_{hincast_len}.json'), 'w') as fp:
-            #    json.dump(dic, fp, sort_keys=True, indent=4)
             print('dictionary saved successfully to file')
 
