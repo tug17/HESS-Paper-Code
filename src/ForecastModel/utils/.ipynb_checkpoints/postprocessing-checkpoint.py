@@ -157,16 +157,11 @@ class ModelHandler:
         if is_final_model:
             self.lg_path = model_folder
             self.hp_path = model_folder
-            if is_external_model:
-                self.target_name   = target_name
-                self.feat_hindcast = feat_hindcast
-                self.feat_forecast = feat_forecast
-            else:
-                with open(os.path.join(self.lg_path, "features.txt"), "r") as f:
-                    dic = json.load(f)
-                self.target_name   = dic["target_name"]
-                self.feat_hindcast = dic["feat_hindcast"]
-                self.feat_forecast = dic["feat_forecast"]
+            with open(os.path.join(self.lg_path, "features.txt"), "r") as f:
+                dic = json.load(f)
+            self.target_name   = dic["target_name"]
+            self.feat_hindcast = dic["feat_hindcast"]
+            self.feat_forecast = dic["feat_forecast"]
         else:
             self.lg_path = os.path.join(model_folder, "log", f"trial_{n_trial:02d}")
             self.hp_path = os.path.join(model_folder,  "hp", f"trial_{n_trial:02d}")

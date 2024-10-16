@@ -13,12 +13,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 import warnings
-from scipy.special import inv_boxcox
-from scipy import stats
-
-import os
-
-from datetime import datetime
 
 from ForecastModel.utils.metrics import evaluate_multistep, calculate_bias, calculate_kge, calculate_nse, calculate_rmse
 
@@ -61,9 +55,9 @@ def prepare_forecast_data(df, observations,training,hincastlen,forecastlen, star
 # model parameters from optimization
 class customARIMA:
     def __init__(self, 
-                 p = 5,
+                 p = 14,
                  d = 1, 
-                 q = 6,
+                 q = 13,
                  hindcast_data = ['qsim','qmeastrain'],
                  forecast_data = ['qmeastrain'],
                  hindcast_len = 200,
@@ -76,10 +70,6 @@ class customARIMA:
         self.forecast_data = forecast_data
         self.hindcast_len = hindcast_len
         self.forecast_len = forecast_len
-        
-        # lambda for box-cox transformation
-        self.lambda_box = 0.2
-        
     # plot a single forecast with index
     def plot_fc(self,index):
         fig, axs = plt.subplots()
@@ -97,14 +87,8 @@ class customARIMA:
     def fit(self, train_df):
         X_train = train_df[self.hindcast_data]
         # compute residuals
-        
-        # box_cox transsform
-        sim_trans = stats.boxcox(X_train['qsim'].values, lmbda = self.lambda_box)
-        meas_trans = stats.boxcox(X_train['qmeastrain'].values, lmbda = self.lambda_box)
-        
-        #residual_hind = X_train['qsim'].values - X_train['qmeastrain'].values
-        residual_hind = sim_trans - meas_trans
-        model = SARIMAX(residual_hind,
+        residual_hind = X_train['qsim'].values - X_train['qmeastrain'].values
+        model = SARIMAX(residual_hind, 
                         order=self.order, 
                         enforce_stationarity = False, 
                         enforce_invertibility = False)
@@ -124,21 +108,13 @@ class customARIMA:
         # make predictions for all time steps
         for i in tqdm(range(0,len(self.y_test_fc))):
             # compute residuals
-            sim_trans = stats.boxcox(self.X_test_hc[i][:,0], lmbda = self.lambda_box)
-            obs_trans = stats.boxcox(self.X_test_hc[i][:,1], lmbda = self.lambda_box)
-            #error_i = self.X_test_hc[i][:,0] - self.X_test_hc[i][:,1]
-            error_i = sim_trans - obs_trans
+            error_i = self.X_test_hc[i][:,0] - self.X_test_hc[i][:,1]
             # apply model parameters from fitted arima model
             model_i = SARIMAX(error_i, order=self.order).filter(self.fitted_model.params)
             # make prediction
             forecast_error = model_i.get_forecast(steps=self.forecast_len).predicted_mean
-            # inverse box-cox transformation
-            #trans_sim_fc = stats.boxcox(self.X_test_fc[i][:,0], lmbda = self.lambda_box)
-            # correct forecasts
-            sim_fc = stats.boxcox(self.X_test_fc[i][:,0], self.lambda_box)
-            corrected_fc = sim_fc - forecast_error
-            # transform back to original scale
-            corrected_fc = inv_boxcox(corrected_fc, self.lambda_box)
+            # correct hydrologic modeling results
+            corrected_fc = self.X_test_fc[i][:,0] - forecast_error
             self.y_pred[i] = corrected_fc
             # add results datetime, corrected forecasts, measurements, and results of the original hydrologic model
             app_arr = [df.index[i + start_index]] + corrected_fc.tolist() + self.y_test_fc[i].reshape(96).tolist() + self.X_test_fc[i][:,0].reshape(96).tolist()
@@ -150,16 +126,8 @@ class customARIMA:
 #         Main
 #############################
 # path to training data
-data_path = r'data/Dataset.csv'
+data_path = r'training.csv'
 df = pd.read_csv(data_path, parse_dates=['time'], index_col='time')
-LOG_PATH = r"trials"
-
-CURRENT_TIME = datetime.strftime(datetime.now(), "%Y%m%d")
-LOG_PATH = os.path.join(LOG_PATH, CURRENT_TIME + model_name)
-
-if os.path.isdir(LOG_PATH) == False:
-    os.mkdir(LOG_PATH)
-
 # forecasts length in time steps
 forecast_len = 96
 # specifiy which folds we calculate
@@ -234,7 +202,7 @@ for fold in folds:
         kge_i = calculate_kge(y_test[:,i], y_pred[:,i])
         losses_kge.append(kge_i)
     losses_bias = []
-    for i in range(0,feorecast_len):
+    for i in range(0,forecast_len):
         bias_i = calculate_bias(y_test[:,i], y_pred[:,i])
         losses_bias.append(bias_i)
 
@@ -243,13 +211,13 @@ for fold in folds:
     print('BIAS val: %s, BIAS test: %s' % (np.mean(losses_bias_val),np.mean(losses_bias)))
     
     # pickle all forecasts
-    all_fc_df.to_pickle('trials/ARIMA_BOXCOX/forecast_%s.pkl' % (2012 + k))
+    all_fc_df.to_pickle('forecast_%s.pckl' % k)
     
     k+=1
 
 # plot a single forecast   
-model.plot_fc(20850)
-#model.plot_fc(1)
+# model.plot_fc(20848)
+
 # plot forecasts
 #arima_q0 = all_fc_df['fc%s' % 20].values
 #measured_q0 = all_fc_df['obs%s' % 20].values

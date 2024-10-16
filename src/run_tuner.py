@@ -36,14 +36,16 @@ max_trials      = 50
 inital_trials   = 30
 overwrite       = True
 
+model_name = "LSTM_TEST"
+
 # paths
 #TB_LOG_PATH = r"tb"
-TB_LOG_PATH = r"F:\11_EFFORS\python\tb"
+TB_LOG_PATH = r"trials\tb"
 DATA_PATH   = r"data\Dataset.csv"
 CROSS_INDICES_PATH = r"data\indices"
 
 CURRENT_TIME = datetime.strftime(datetime.now(), "%Y%m%d")
-TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + "_eLSTM-simple-MSE_min-max")
+TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + model_name)
 
 # set features
 # hindcast feature set is ignored for eLSTM structure
