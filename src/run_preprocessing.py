@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # create indices
     ci = CreateIndices(OUT_DATA_PATH, out_path=OUT_INDICES_PATH)
     ci.create(n_sets = 7, 
-            hincast_lengths = [96], 
+            hincast_lengths = [48,96], 
             forecast_len = 96, 
             target_len = 96,
             )

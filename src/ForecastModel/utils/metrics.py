@@ -209,9 +209,10 @@ def calculate_bias_flv(observations, predictions, exceedance_prob = 0.7):
     # replace values close to 0 due to numerical reasons
     observations_lv[observations_lv <= 1e-6] = 1e-6
     predictions_lv[predictions_lv   <= 1e-6] = 1e-6
-    
-    #observations_lv  = np.log(observations_lv)
-    #predictions_lv   = np.log(predictions_lv)
+
+    # omitted to increase comparability
+    # observations_lv  = np.log(observations_lv)
+    # predictions_lv   = np.log(predictions_lv)
     
     obs  = np.sum(observations_lv - np.min(observations_lv))
     pred = np.sum(predictions_lv  - np.min(predictions_lv))
