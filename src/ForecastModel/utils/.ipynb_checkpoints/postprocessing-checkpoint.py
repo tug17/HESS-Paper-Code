@@ -21,6 +21,7 @@ def load_metrics(path):
     return metrics
 
 def extract_arima_metrics(path, filename = "model.json"):
+    # OBSOLETE
     with open(os.path.join(path, filename),"r") as f:
         dic = json.load(f)
         
@@ -34,6 +35,7 @@ def extract_arima_metrics(path, filename = "model.json"):
     return dic
 
 def regroup_metrics(path=r"F:\11_EFFORS\python\models"):
+    # OBSOLETE
     metric = {"eval": {},
              "test": {}}
     for key in ["nse", "kge", "bias"]:
@@ -95,6 +97,7 @@ def get_bold_mask(df, fcn=np.argmax, n_multi_cols=3, offset=0):
 
 
 def find_best_models(data_lstm, data_arima):
+    # OBSOLETE
     all_best = []
     normalized_arima = []
     normalized_lstm = []
@@ -141,6 +144,30 @@ def find_best_models(data_lstm, data_arima):
         normalized_hydro.append(num_best_hydro / (num_best_arima + num_best_lstm))
     
     return all_best, np.asarray(normalized_arima), np.asarray(normalized_lstm), all_absolute_errors_arima, all_absolute_errors_lstm
+
+def get_n_peaks(df, col_eval, n_peaks, window):
+    # find the n_peaks most prominent peaks in df[col_eval] and returns peak values with the window
+    peaks = []
+    df_length = df.shape[0]
+    for n_peak in range(n_peaks):
+        i_max   = df[col_eval].argmax()
+        i_start = np.max([0, i_max - window//4])
+        i_end   = np.min([df_length, i_max + window])
+        
+        df["n_peak"] = n_peak
+        peaks.append(df.iloc[i_start:i_end].copy())
+        
+        df = df.drop(df.index[i_start:i_end], axis=0)
+    
+    peaks = pd.concat(peaks, axis=0)
+    return peaks
+
+def dt(dates, format="%d/%m/%Y %H:%M"):
+    if dates.tz == None:
+        # make TZ aware
+        return pd.to_datetime(dates, format=format).tz_localize("Europe/London").tz_convert("UTC")
+    else:
+        return pd.to_datetime(dates, format=format).tz_convert("UTC")
 
 
 #############################

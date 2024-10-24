@@ -20,8 +20,8 @@ import json
 
 from ForecastModel.data.models import DataModelCV
 from ForecastModel.utils.losses import loss_nkge_nnse
-#from ForecastModel.models import Hindcast as architecture
-from ForecastModel.models import eLSTM as architecture
+from ForecastModel.models import Hindcast as architecture
+#from ForecastModel.models import eLSTM as architecture
 from ForecastModel.tuners import MyTuner
 
 tf.config.run_functions_eagerly(False)
@@ -36,32 +36,34 @@ max_trials      = 50
 inital_trials   = 30
 overwrite       = True
 
+model_name = "HLSTM_boxcox"
+
 # paths
 #TB_LOG_PATH = r"tb"
-TB_LOG_PATH = r"F:\11_EFFORS\python\tb"
+TB_LOG_PATH = r"trials\tb"
 DATA_PATH   = r"data\Dataset.csv"
 CROSS_INDICES_PATH = r"data\indices"
 
 CURRENT_TIME = datetime.strftime(datetime.now(), "%Y%m%d")
-TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + "_eLSTM-simple-MSE_min-max")
+TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + model_name)
 
 # set features
 # hindcast feature set is ignored for eLSTM structure
 features = {
-    "target_name": 'qmeasval',
+    "target_name": 'qmeasval_boxcox',
     "feat_hindcast": [
-        #'qsim',
-        #'pmax',
-        #'tmean',
-        #'pmean', 
-        #'qmeasval',
-        'simres',
+        'qsim_boxcox',
+        'pmax',
+        'tmean',
+        'pmean', 
+        'qmeasval_boxcox',
+        #'simres',
         ],
     "feat_forecast": [
-        #'qsim',
-        #'pmax',
-        #'tmean',
-        #'pmean',
+        'qsim_boxcox',
+        'pmax',
+        'tmean',
+        'pmean',
         #'simres',
         ],
     }
@@ -79,7 +81,7 @@ def call_model(hp):
            "lr"             : hp.Float("lr",              min_value=0.001, max_value=0.01, sampling="log"),
            "batch_size"     : hp.Fixed("batch_size",      value=4000),  #hp.Int("batch_size",      min_value=200,max_value=1000, step=100),
            "retrain_epochs" : hp.Fixed("retrain_epochs",  value=5),     #hp.Int("retrain_epochs",    min_value=0,  max_value=5,    step=1),
-           "hindcast_len"   : hp.Fixed("hindcast_length", value=96),    #hp.Int("hindcast_length", min_value=96, max_value=96*2, step=96),
+           "hindcast_len"   : hp.Fixed("hindcast_length", value=48),    #hp.Int("hindcast_length", min_value=96, max_value=96*2, step=96),
            "forecast_len"   : 96,
            "target_len"     : 96,
            "n_features_hc"  : len(features["feat_hindcast"]), 

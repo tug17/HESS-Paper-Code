@@ -19,7 +19,7 @@ from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 #         Classes
 #############################
 class DataModelCV:
-    def __init__(self, csv_path, target_name="qmeasval", hincast_features=[], forecast_features=[]):
+    def __init__(self, csv_path, target_name, hincast_features, forecast_features):
         self.csv_path = csv_path 
         self.target            = [target_name]
         self.hincast_features  = hincast_features
@@ -49,7 +49,7 @@ class DataModelCV:
         self.sets   = dic["sets"]
         self.params.update(dic["params"])
         
-    def getDataSet(self, n_set, scale=False, shuffle=False):
+    def getDataSet(self, n_set, scale=False, shuffle=False, box_cox=False):
         if type(n_set) == type(list()):
             hi, fi, yi = [], [], []
             for n in n_set:
@@ -160,10 +160,11 @@ class DataModelCV:
                  }
         return cross_sets
         
-    def main(self, filename='cross_indices.pkl', verbose=1):
+    def main(self, filename='cross_indices.pkl', fit_scaler = True, verbose = 1):
         self.loadCSV()
         self.loadCrossIndices(filename=filename)
         
         self.cross_sets = self.getCrossValidSets(self.params["n_sets"])
 
-        self.fitScaler(0)
+        if fit_scaler:
+            self.fitScaler(0)

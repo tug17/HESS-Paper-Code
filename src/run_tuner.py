@@ -36,7 +36,7 @@ max_trials      = 50
 inital_trials   = 30
 overwrite       = True
 
-model_name = "HLSTM_48"
+model_name = "HLSTM_boxcox"
 
 # paths
 #TB_LOG_PATH = r"tb"
@@ -50,17 +50,17 @@ TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + model_name)
 # set features
 # hindcast feature set is ignored for eLSTM structure
 features = {
-    "target_name": 'qmeasval',
+    "target_name": 'qmeasval_boxcox',
     "feat_hindcast": [
-        'qsim',
+        'qsim_boxcox',
         'pmax',
         'tmean',
         'pmean', 
-        'qmeasval',
+        'qmeasval_boxcox',
         #'simres',
         ],
     "feat_forecast": [
-        'qsim',
+        'qsim_boxcox',
         'pmax',
         'tmean',
         'pmean',

@@ -49,7 +49,7 @@ class DataModelCV:
         self.sets   = dic["sets"]
         self.params.update(dic["params"])
         
-    def getDataSet(self, n_set, scale=False, shuffle=False):
+    def getDataSet(self, n_set, scale=False, shuffle=False, box_cox=False):
         if type(n_set) == type(list()):
             hi, fi, yi = [], [], []
             for n in n_set:
