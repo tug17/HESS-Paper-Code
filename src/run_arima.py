@@ -99,7 +99,7 @@ class customARIMA:
         # compute residuals
         
         # box_cox transsform
-        sim_trans = stats.boxcox(X_train['qsim'].values, lmbda = self.lambda_box)
+        sim_trans  = stats.boxcox(X_train['qsim'].values, lmbda = self.lambda_box)
         meas_trans = stats.boxcox(X_train['qmeastrain'].values, lmbda = self.lambda_box)
         
         #residual_hind = X_train['qsim'].values - X_train['qmeastrain'].values
