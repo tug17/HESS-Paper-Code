@@ -19,7 +19,6 @@ from datetime import datetime
 import json
 
 from ForecastModel.data.models import DataModelCV
-from ForecastModel.utils.losses import loss_nkge_nnse
 from ForecastModel.models import Hindcast as architecture
 from ForecastModel.tuners import MyTuner
 
@@ -35,10 +34,9 @@ max_trials      = 50
 inital_trials   = 30
 overwrite       = True
 
-model_name = "eLSTM_48_2"
+model_name = "HLSTM_test"
 
 # paths
-#TB_LOG_PATH = r"tb"
 TB_LOG_PATH = r"trials\tb"
 DATA_PATH   = r"data\Dataset.csv"
 CROSS_INDICES_PATH = r"data\indices"
@@ -47,12 +45,11 @@ CURRENT_TIME = datetime.strftime(datetime.now(), "%Y%m%d")
 TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + model_name)
 
 # set features
-# hindcast feature set is ignored for eLSTM structure
 features = {
     "target_name": 'qmeasval',
     "feat_hindcast": [
         'qsim',
-        #'pmax',
+        'pmax',
         #'tmean',
         #'pmean', 
         'qmeasval',
@@ -60,7 +57,7 @@ features = {
         ],
     "feat_forecast": [
         'qsim',
-       # 'pmax',
+        'pmax',
        # 'tmean',
        # 'pmean',
         #'simres',
@@ -93,7 +90,6 @@ def call_model(hp):
                                          clipnorm=0.001)
     model.compile(optimizer=optimizer, 
                loss='mean_squared_error',
-               #loss = loss_nkge_nnse
                )
     
     return model

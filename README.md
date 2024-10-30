@@ -2,7 +2,7 @@ Accompanying code for our HESS paper (Submission 2) "Long Short-Term Memory Netw
 
 ```
 Gegenleithner, S., Pirker, M., Dorfmann, C., Kern, R., Schneider, J., 2024. 
-Long Short-Term Memory Networks for Real-time Flood Forecast Correction: A Case Study for an Underperforming Hydrologic Model. 
+Long Short-Term Memory Networks for Enhancing Real-time Flood Forecasts: A Case Study for an Underperforming Hydrologic Model
 ```
 
 The preprint of the manuscript can be found here : [Long Short-Term Memory Networks for Real-time Flood Forecast Correction: A Case Study for an Underperforming Hydrologic Model (Preprint)](https://egusphere.copernicus.org/preprints/2024/egusphere-2024-1030/)

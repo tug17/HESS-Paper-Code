@@ -20,7 +20,7 @@ import os
 
 from datetime import datetime
 
-from ForecastModel.utils.metrics import evaluate_multistep, calculate_bias, calculate_kge, calculate_nse, calculate_rmse
+from ForecastModel.utils.metrics import evaluate_multistep, calculate_bias, calculate_kge, calculate_nse
 
 #############################
 #         Functions
@@ -150,9 +150,10 @@ class customARIMA:
 #         Main
 #############################
 # path to training data
+model_name = "ARIMA_test"
 data_path = r'data/Dataset.csv'
 df = pd.read_csv(data_path, parse_dates=['time'], index_col='time')
-LOG_PATH = r"trials"
+LOG_PATH = r"trials/arima"
 
 CURRENT_TIME = datetime.strftime(datetime.now(), "%Y%m%d")
 LOG_PATH = os.path.join(LOG_PATH, CURRENT_TIME + model_name)
@@ -243,7 +244,7 @@ for fold in folds:
     print('BIAS val: %s, BIAS test: %s' % (np.mean(losses_bias_val),np.mean(losses_bias)))
     
     # pickle all forecasts
-    all_fc_df.to_pickle('trials/ARIMA_BOXCOX/forecast_%s.pkl' % (2012 + k))
+    all_fc_df.to_pickle(os.path.join(LOG_PATH, 'forecast_%s.pkl' % (2012 + k)))
     
     k+=1
 
@@ -255,9 +256,4 @@ model.plot_fc(20850)
 #measured_q0 = all_fc_df['obs%s' % 20].values
 #hydro_q0 = all_fc_df['sim%s' % 20].values
 
-#plt.plot(arima_q0, color = 'r')
-#plt.plot(measured_q0, 'k-')
-#plt.plot(hydro_q0, color = 'b')
-
-#nse_testing = calculate_nse(measured_q0, arima_q0)
 
