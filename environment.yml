@@ -1,4 +1,4 @@
-name: tf2
+name: tf2test
 channels:
   - anaconda
   - bokeh
@@ -326,6 +326,7 @@ dependencies:
       - spyder-kernels==1.10.0
       - sqlalchemy==2.0.25
       - stack-data==0.6.3
+      - statsmodels==0.14.4
       - tensorboard==2.10.1
       - tensorboard-data-server==0.6.1
       - tensorboard-plugin-wit==1.8.1
