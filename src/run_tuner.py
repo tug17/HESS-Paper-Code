@@ -21,7 +21,6 @@ import json
 from ForecastModel.data.models import DataModelCV
 from ForecastModel.utils.losses import loss_nkge_nnse
 from ForecastModel.models import Hindcast as architecture
-#from ForecastModel.models import eLSTM as architecture
 from ForecastModel.tuners import MyTuner
 
 tf.config.run_functions_eagerly(False)
@@ -36,7 +35,7 @@ max_trials      = 50
 inital_trials   = 30
 overwrite       = True
 
-model_name = "HLSTM_boxcox"
+model_name = "eLSTM_48_2"
 
 # paths
 #TB_LOG_PATH = r"tb"
@@ -50,20 +49,20 @@ TB_LOG_PATH = os.path.join(TB_LOG_PATH, CURRENT_TIME + model_name)
 # set features
 # hindcast feature set is ignored for eLSTM structure
 features = {
-    "target_name": 'qmeasval_boxcox',
+    "target_name": 'qmeasval',
     "feat_hindcast": [
-        'qsim_boxcox',
-        'pmax',
-        'tmean',
-        'pmean', 
-        'qmeasval_boxcox',
+        'qsim',
+        #'pmax',
+        #'tmean',
+        #'pmean', 
+        'qmeasval',
         #'simres',
         ],
     "feat_forecast": [
-        'qsim_boxcox',
-        'pmax',
-        'tmean',
-        'pmean',
+        'qsim',
+       # 'pmax',
+       # 'tmean',
+       # 'pmean',
         #'simres',
         ],
     }

@@ -20,30 +20,6 @@ def load_metrics(path):
         metrics = json.load(f)
     return metrics
 
-def extract_arima_metrics(path, filename = "model.json"):
-    # OBSOLETE
-    with open(os.path.join(path, filename),"r") as f:
-        dic = json.load(f)
-        
-    for metric in ["NSE", "KGE", "bias"]:
-        array = []
-        for n_fold in range(1,6):
-            array.append(dic[f"Fold_{n_fold:d} all"][metric])
-            
-        np.savetxt(os.path.join(path, f"metric_{metric.lower()}.txt"),
-                      np.array(array), delimiter=",")
-    return dic
-
-def regroup_metrics(path=r"F:\11_EFFORS\python\models"):
-    # OBSOLETE
-    metric = {"eval": {},
-             "test": {}}
-    for key in ["nse", "kge", "bias"]:
-        metric["test"][key] = np.loadtxt(os.path.join(path, f"metric_{key}.txt"), delimiter=",").tolist()
-
-    with open(os.path.join(path, "metrics.txt"), "w+") as f:
-        json.dump(metric, f)
-
 def df2latex(df, file, bold_mask=None, fmt=None):
     print(file)
     if type(bold_mask) == type(None):
@@ -94,7 +70,6 @@ def get_bold_mask(df, fcn=np.argmax, n_multi_cols=3, offset=0):
         for j in range(df.shape[0]):
             mask[j, idx[j]*n_multi_cols+n+offset] = 1
     return mask
-
 
 def find_best_models(data_lstm, data_arima):
     # OBSOLETE
@@ -168,7 +143,6 @@ def dt(dates, format="%d/%m/%Y %H:%M"):
         return pd.to_datetime(dates, format=format).tz_localize("Europe/London").tz_convert("UTC")
     else:
         return pd.to_datetime(dates, format=format).tz_convert("UTC")
-
 
 #############################
 #         Classes

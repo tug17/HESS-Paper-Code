@@ -87,36 +87,3 @@ class Hindcast:
 
         #model.summary()
         return model
-
-#%% eLSTM
-class eLSTM:
-    def __init__(self, random_seed=17):
-        tf.keras.utils.set_random_seed(random_seed)
-        self.name = "eLSTM"
-
-    def build_model(hp):
-        ## input
-        inp_hincast  = tf.keras.layers.Input(shape=(hp["hindcast_len"], hp["n_features_hc"])) # ignored for eLSTM
-        inp_forecast = tf.keras.layers.Input(shape=(hp["forecast_len"], hp["n_features_fc"]))
-        
-        # add LSTM layer
-        hidden = tf.keras.layers.LSTM(units  = hp["lstm_unit"],
-                                      activation   = 'tanh', 
-                                      dropout      = 0, #hp["lstm_dropout"],
-                                      return_state = False,
-                                      return_sequences = True,
-                                      )(inp_forecast)
-
-        # flatten layer
-        hidden = tf.keras.layers.Flatten()(hidden)
-        
-        hidden = tf.keras.layers.Dropout(hp["dropout_rate"])(hidden)
-        
-        # fully connected
-        hidden = tf.keras.layers.Dense(hp["target_len"], activation='relu')(hidden)
-        
-        ## create model                               
-        model = tf.keras.Model(inputs=[inp_hincast, inp_forecast], outputs=hidden)
-
-        #model.summary()
-        return model

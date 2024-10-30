@@ -6,7 +6,7 @@
 
 #############################
 #         Imports
-#############################
+# ############################
 import os
 import tensorflow as tf
 from tensorflow.keras import backend as K
@@ -19,20 +19,14 @@ from tensorboard.plugins.hparams import api as tb_hp
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-
-#
-from scipy.special import inv_boxcox
-from scipy import stats
-#
-
 import json
 
 from ForecastModel.utils.metrics import evaluate_multistep, calculate_bias, calculate_kge, calculate_nse, calculate_rms, calculate_kge5alpha
 
 #############################
 #         Classes
-#############################
-#%
+# ############################
+# %
 class MyTuner(keras_tuner.BayesianOptimization):
     def on_trial_end(self, trial):
         super().on_trial_end(trial)
@@ -104,7 +98,6 @@ class MyTuner(keras_tuner.BayesianOptimization):
             
             # training on training set
             print("train model")
-            
             # reset learning rate to inital value
             K.set_value(model.optimizer.learning_rate, hp["lr"])
             model.fit(X_train, y_train, 
@@ -121,11 +114,6 @@ class MyTuner(keras_tuner.BayesianOptimization):
                                         batch_size = hp["batch_size"], 
                                         workers = 4,
                                         use_multiprocessing=True)
-
-            #
-            y_valid      = inv_boxcox(y_valid       - 3, 0.2)
-            y_pred_valid = inv_boxcox(y_pred_valid  - 3, 0.2)
-            #
             
             for key in metric_fcns.keys():
                 losses = evaluate_multistep(y_valid, 
@@ -166,10 +154,6 @@ class MyTuner(keras_tuner.BayesianOptimization):
                                         batch_size = hp["batch_size"], 
                                         workers = 4,
                                         use_multiprocessing=True)
-            #
-            y_test      = inv_boxcox(y_test      - 3, 0.2)
-            y_pred_test = inv_boxcox(y_pred_test - 3, 0.2)
-            #
 
             for key in metric_fcns.keys():
                 losses = evaluate_multistep(y_test, 

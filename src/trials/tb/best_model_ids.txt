@@ -1,2 +1,0 @@
-20241021eLSTM_boxcox: 36
-20241021HLSTM_boxcox: 41
