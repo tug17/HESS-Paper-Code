@@ -71,61 +71,6 @@ def find_best_model(directory, metric_key="kge"):
         
     return valid, test
 
-def eval_peak_distance(time,meas_data,sim_data,hq1,window):
-    
-    # find indices in meas data larger than hq1
-    indices = np.where(meas_data > hq1)
-    indices = indices[0].tolist()
-    indices.append(1)
-    
-    chunks = []
-    chunk = []
-    
-    for i in range(0,len(indices)-1):
-       # print(indices[0][i])
-        if len(chunk) == 0:
-            chunk.append(indices[i])
-        if abs(indices[i] - indices[i+1]) < window:
-            chunk.append(indices[i+1])
-        else:
-            chunks.append(chunk)
-            chunk = []
-    
-    # reinit array blow up chuncks to measurement array
-    chuncks_blown = []
-    
-    for chunk in chunks:
-        min_val = min(chunk) - window
-        max_val = max(chunk) + window
-        
-        range_new = list(range(min_val, max_val))
-        
-        chuncks_blown.append(range_new)
-    
-    # compute distances
-    times = []
-    vals_meas = []
-    vals_sim = []
-    
-    x_sim = []
-    y_sim = []
-    x_meas = []
-    y_meas = []
-    
-    for chunck in chuncks_blown:
-        
-        val_meas_i = np.asarray(meas_data[chunck])
-        val_sim_i = np.asarray(sim_data[chunck])
-        
-        # normalize
-        time_norm = time[chunck]
-        
-        times.append(time_norm)
-        vals_meas.append(val_meas_i)
-        vals_sim.append(val_sim_i)
-    
-    return times, vals_meas, vals_sim, chuncks_blown, x_sim,y_sim,x_meas,y_meas
-
 # evaluate over forecasting horizont
 def evaluate_multistep(obs_multistep, pred_multistep, loss_function):
     # print((obs_multistep.shape), pred_multistep.shape)
@@ -159,6 +104,27 @@ def calculate_kge(observations, predictions):
     KGE =  1 - np.sqrt((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2)
     
     return KGE
+
+def calculate_kge_var(observations, predictions):
+
+    m1, m2 = np.nanmax((np.nanmean(observations), 1e-6)), np.nanmax((np.nanmean(predictions), 1e-6))
+    gamma = (np.std(predictions) / m2) / (np.std(observations) / m1)
+    
+    return gamma
+
+def calculate_kge_bias(observations, predictions):
+    
+    m1, m2 = np.nanmax((np.nanmean(observations), 1e-6)), np.nanmax((np.nanmean(predictions), 1e-6))
+    beta = m2 / m1
+    
+    return beta
+
+def calculate_kge_linear(observations, predictions):
+    
+    m1, m2 = np.nanmax((np.nanmean(observations), 1e-6)), np.nanmax((np.nanmean(predictions), 1e-6))
+    r = np.sum((observations - m1) * (predictions - m2)) / (np.sqrt(np.sum((observations - m1) ** 2)) * np.sqrt(np.sum((predictions - m2) ** 2)))
+    
+    return r
     
 def calculate_kge5alpha(observations, predictions):
     
