@@ -11,7 +11,12 @@ The code in this repository was used to produce and train all models and create 
 
 
 ## Content of the repository `HESS-Paper-Code/`
-`src/`
+- `hess_paper_output/`   contains all figures and tables created
+- `models/`              contains final trained models, fold predictions and evaluated metrics
+   - `models/ARIMA`      contains ARIMA result files
+   - `models/PBHM-HLSTM` contains PBHM-HLSTM result files and model save files for each fold
+   - `models/eLSTM`      contains eLSTM result files and model save files for each fold
+-`src/`
    - `src/data/`            contains the input dataset 'Dataset.csv'
       - `src/data/indices`  contains sequence index arrays in .pkl format
    - `src/ForecastModel/`          contains the entire code to create, train and tune ARIMA and LSTM models
@@ -24,13 +29,9 @@ The code in this repository was used to produce and train all models and create 
    - `src/run_preprocessing.py` python file for preprocessing indices
    - `src/run_tuner.py`         python file to train our ML models
 - `tb_logs/`             contains tensorboard logs for all model variants evaluated during the tuning process
-- `models/`              contains final trained models, fold predictions and evaluated metrics
-   - `models/ARIMA`      contains ARIMA result files
-   - `models/PBHM-HLSTM` contains PBHM-HLSTM result files and model save files for each fold
-   - `models/eLSTM`      contains eLSTM result files and model save files for each fold
 - `fig*.ipynb`               notebooks used to create paper figures
-- `h_create_tables.ipynb`    notebook used to create paper all Latex tables
-- `h_evaluate_metrics.ipynb` notebook to evalute the model performance metrics and saves them into a ".txt" file
+- `post_create_tables.ipynb`    notebook used to create paper all Latex tables
+- `pre_evaluate_metrics.ipynb` notebook to evalute the model performance metrics and saves them into a ".txt" file
 - `environment.yml`          contains installed packages and dependencies
    
 ## Setup to run the code locally
@@ -73,8 +74,8 @@ python run_tuner.py
 ### Run notebooks
 Jupyter notebooks can be run in the same environment.
 Important:
-- `h_evaluate_metrics.ipynb` is meant to be executed first, as its output is used e.g. in `fig5_leadtime_performance.ipynb`.
-- `h_create_tables.ipynb` is meant to be executed last, as it requires data created during the processing of the other notebooks.
+- `pre_evaluate_metrics.ipynb` is meant to be executed first, as its output is used e.g. in `fig5_leadtime_performance.ipynb`.
+- `post_create_tables.ipynb` is meant to be executed last, as it requires data created during the processing of the other notebooks.
 
 ## Citation
 If you use any of this code in your experiments, please make sure to cite the following publication
