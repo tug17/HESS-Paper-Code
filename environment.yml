@@ -1,4 +1,4 @@
-name: tf2test
+name: tf2
 channels:
   - anaconda
   - bokeh

@@ -1,4 +1,4 @@
-Accompanying code for our HESS paper (Submission 2) "Long Short-Term Memory Networks for Enhancing Real-time Flood Forecasts: A Case Study for an Underperforming Hydrologic Model"
+Accompanying code for our HESS paper "Long Short-Term Memory Networks for Enhancing Real-time Flood Forecasts: A Case Study for an Underperforming Hydrologic Model"
 
 ```
 Gegenleithner, S., Pirker, M., Dorfmann, C., Kern, R., Schneider, J., 2024. 
@@ -42,11 +42,31 @@ git clone git@github.com:tug17/HESS-Paper-Code.git
 ```
 
 ### Setup Python environment
-Within this repository, we provide a environment file (`environment.yml`) that can be used with Anaconda or Miniconda to create an environment with all packages needed.
-Build on Tensorflow 2.10 runs on Windows 10 with a CUDA capable NVIDIA GPU. 
+This build uses Tensorflow 2.10 with python 3.9.18 and runs on Windows 10 with a CUDA capable NVIDIA GPU. 
+Required package for the execution of the code are: 
+```
+python==3.9.18
+pip==24.2
+tensorflow==2.10.1
+keras-tuner==1.4.6
+matplotlib==3.8.0
+numpy==1.26.2
+pandas==2.1.4
+scikit-learn==1.3.2
+statsmodels==0.14.4
+tqdm==4.66.1
+jupyter
+```
 
+Within this repository, we also provide a environment file (`environment.yml`) that can be used with Anaconda or Miniconda to create an environment with all packages needed:
 ```
 conda env create -f environment.yml
+```
+
+Alternativly, you may also install the dependecies from `requirements.txt`, by using e.g. `pip`:
+
+```
+pip install -r requirements.txt
 ```
 
 ### Data required
